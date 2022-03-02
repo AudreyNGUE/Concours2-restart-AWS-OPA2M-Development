@@ -1,5 +1,7 @@
 import copy
-#Ajouter un produit au catalogue
+from unicodedata import name
+
+#Définition des modèles
 
 productDictionnary= {
 
@@ -10,7 +12,19 @@ productDictionnary= {
 
 }
 
+custumerDictionnary={
+    "Nom" : "",
+    "Id" : "",
+    "Montant Total Achat" : 0.0,
+    "Nombre de points" : 0
+}
+
 productCatalogue=[]
+custumerList=[]
+
+#Enoncé des fonctionnalités
+#Ajouter un produit au catalogue
+
 
 #Fonction de verification de l'existence d'un produit
 def productVerification(refProduct,productCatalogue):
@@ -118,20 +132,51 @@ def productRemove(refProduct,productCatalogue):
             return productCatalogue 
         
 
+#Fonction de création d'un client
+def custumerIdentify(Nom,Id):
+    currentCustumer=copy.copy(custumerDictionnary)
+    currentCustumer["Nom"] = Nom
+    currentCustumer["Id"] = Id
+    custumerList.append(currentCustumer)
+    return currentCustumer
+
+bread2=productCreation("P098766","Pain",150,10)
+#print(productCatalogue)
+custumerIdentify("Audrey",5545)
+# Fonction d'achat d'un produit
+
+def productBying(Nom, Reference, Quantité):
+    for product in productCatalogue:
+        if product["Reference"] == Reference:
+            product["Quantité"] -= Quantité 
+            for client in custumerList:
+                if client["Nom"] == Nom:
+                    client["Montant Total Achat"] = product["Prix"]*Quantité
+
+
+
+productBying("Audrey", "P098766",2)
+#print(productCatalogue)
+
+#print(custumerList)
+
+    
+    
 
 
 
 
 
-bread=productCreation("P098765","Pain",150,10)
+"""bread=productCreation("P098765","Pain",150,10)
 sugar=productCreation("P098764","Sucre",750,20)
 breadDel=productRemove("P098765",productCatalogue)
-print(breadDel)
+print(breadDel)"""
 
 #test=productModification("2")
 #breadNew=productPriceModification("P098765",productCatalogue,250)
 #print(breadNew)
 #bread2=productCreation("P098766","Pain",150,10)
+
 #breadExist=productVerification("P098765",productCatalogue)
 #print(productCatalogue)
 #bread=productConfirmCreation("P098765","Pain",150,10)
