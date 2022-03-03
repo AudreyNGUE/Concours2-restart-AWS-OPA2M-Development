@@ -16,7 +16,8 @@ custumerDictionnary={
     "Nom" : "",
     "Id" : "",
     "Montant Total Achat" : 0.0,
-    "Nombre de points" : 0
+    "Nombre de points" : 0,
+    "Nombre de points Annuels" : 0
 }
 
 productCatalogue=[]
@@ -133,7 +134,7 @@ def productRemove(refProduct,productCatalogue):
             return productCatalogue 
         
 #Sprint 2
-#Fonction de création d'un client
+#Fonction d'identification d'un client
 def custumerIdentify(Nom,Id):
     currentCustumer=copy.copy(custumerDictionnary)
     currentCustumer["Nom"] = Nom
@@ -152,28 +153,59 @@ def productBuyingConfirmation(qtyProduct,nameProduct,priceProduct):
 def productBying(Nom, nameProduct, Quantité):
     for product in productCatalogue:
         if product["Nom du Produit"] == nameProduct:
-            refProduct=product["Reference"]
-            priceProduct=product["Prix"]
-            if productVerification(refProduct,productCatalogue):
-                if productBuyingConfirmation(Quantité,nameProduct,priceProduct):
-                    for product in productCatalogue:
-                        if product["Reference"] == refProduct:
-                            product["Quantité"] -= Quantité 
-                            for client in custumerList:
-                                if client["Nom"] == Nom:
-                                    client["Montant Total Achat"] = product["Prix"]*Quantité
-        else:
-            print("Le produit {} n'existe pas! ".format(nameProduct))
+            if product["Quantité"] >= Quantité:
+                refProduct=product["Reference"]
+                priceProduct=product["Prix"]
+                if productVerification(refProduct,productCatalogue):
+                    if productBuyingConfirmation(Quantité,nameProduct,priceProduct):
+                        for product in productCatalogue:
+                            if product["Reference"] == refProduct:
+                                product["Quantité"] -= Quantité 
+                                for client in custumerList:
+                                    if client["Nom"] == Nom:
+                                        client["Montant Total Achat"] = product["Prix"]*Quantité
+                                        print("Votre achat de {} {} vous a couté {}".format(Quantité,nameProduct,client["Montant Total Achat"]))
+                else:
+                    print("Le produit {} n'existe pas! ".format(nameProduct))
+            else:
+                print("Vous ne pouvez pas acheter {} {} ! Veuillez revoir votre quantité ".format(Quantité, nameProduct))
+            
+
+#
+def viewCatalogue():
+    numeroArticle=1
+    print('Liste des produits')
+    for product in productCatalogue:
+        print("{}. {} -> Prix: {} ; Quantité: {}".format(numeroArticle, product['Nom du Produit'],product['Prix'], product['Quantité'])) 
+        numeroArticle+=1
+
+
+"""def inputUserVerification(Quantite):
+    try:
+        type(Quantite)!=float
+    except:
+        a="Veuillez entrer un entier valide"
+    return a"""
+
+  
+
+#testTry=inputUserVerification("545UIHJ")
+#print(testTry)
+
+
+
 
 #productBuyingConfirmation(15,"Riz",1500)
+custumerIdentify("Audrey",5545)
+bread=productCreation("P098766","Pain",150,10)
+bread2=productCreation("P0987645","Lait",100,20)
+productBying("Audrey", "Pain",5)
+#productBying("Ma", "Lait",10)
+viewCatalogue()
 
-bread2=productCreation("P098766","Pain",150,10)
-productBying("Audrey", "Pain",2)
-print(productCatalogue)
-#custumerIdentify("Audrey",5545)
 #print(productCatalogue)
 
-#print(custumerList)
+print(custumerList)
 
     
     
