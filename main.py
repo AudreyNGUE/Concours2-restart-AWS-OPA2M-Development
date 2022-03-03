@@ -16,9 +16,11 @@ custumerDictionnary={
     "Nom" : "",
     "Id" : "",
     "Montant Total Achat" : 0.0,
-    "Nombre de points" : 0,
-    "Nombre de points Annuels" : 0
+    "Nombre de points Hebdommadaires" : 0,
+    "Nombre de points Total" : 0
 }
+
+
 
 productCatalogue=[]
 custumerList=[]
@@ -134,6 +136,7 @@ def productRemove(refProduct,productCatalogue):
             return productCatalogue 
         
 #Sprint 2
+
 #Fonction d'identification d'un client
 def custumerIdentify(Nom,Id):
     currentCustumer=copy.copy(custumerDictionnary)
@@ -163,21 +166,44 @@ def productBying(Nom, nameProduct, Quantité):
                                 product["Quantité"] -= Quantité 
                                 for client in custumerList:
                                     if client["Nom"] == Nom:
-                                        client["Montant Total Achat"] = product["Prix"]*Quantité
-                                        print("Votre achat de {} {} vous a couté {}".format(Quantité,nameProduct,client["Montant Total Achat"]))
+                                        client["Montant Total Achat"] += product["Prix"]*Quantité
+                                        print("Votre achat de {} {} vous a couté {} Francs CFA".format(Quantité,nameProduct,client["Montant Total Achat"]))
                 else:
                     print("Le produit {} n'existe pas! ".format(nameProduct))
             else:
                 print("Vous ne pouvez pas acheter {} {} ! Veuillez revoir votre quantité ".format(Quantité, nameProduct))
-            
 
-#
+#Fonction d'affichage du catalogue
 def viewCatalogue():
     numeroArticle=1
-    print('Liste des produits')
+    print('         Liste des produits')
     for product in productCatalogue:
         print("{}. {} -> Prix: {} ; Quantité: {}".format(numeroArticle, product['Nom du Produit'],product['Prix'], product['Quantité'])) 
         numeroArticle+=1
+
+#Fonction d'affichage de la liste des clients
+def viewCustumerList():
+    numeroClient=1
+    print('           Liste des clients')
+    for client in custumerList:
+        print("{}. {} -> Identifiant : {} ; Montant Total des achat: {} F ; Nombre de points Hebdo : {}  ; Nombre de points Total: {}".format(numeroClient, client['Nom'],client['Id'], client['Montant Total Achat'],client['Nombre de points Hebdommadaires'],client["Nombre de points Total"])) 
+        numeroClient+=1
+
+#Fonction de conversion du prix en nombre()
+def priceInPointConversion():
+    for price in custumerList:
+        price["Nombre de points Hebdommadaires"]+=price["Montant Total Achat"]//1000
+
+#Afficher le catalogue des produits qau'il peut acheter avec ses points cumulés
+#def viewProductPointBuyingCatalogue():
+    #for product in productCatalogue:
+        
+    
+#Fonction d'achat d'un produit en utilisant les points cumules
+#def productBuyingUsingPoint():
+
+
+
 
 
 """def inputUserVerification(Quantite):
@@ -186,6 +212,7 @@ def viewCatalogue():
     except:
         a="Veuillez entrer un entier valide"
     return a"""
+
 
   
 
@@ -197,27 +224,23 @@ def viewCatalogue():
 
 #productBuyingConfirmation(15,"Riz",1500)
 custumerIdentify("Audrey",5545)
+custumerIdentify("Maeva",5545)
 bread=productCreation("P098766","Pain",150,10)
 bread2=productCreation("P0987645","Lait",100,20)
 productBying("Audrey", "Pain",5)
-#productBying("Ma", "Lait",10)
-viewCatalogue()
-
+productBying("Audrey", "Lait",10)
+#viewCatalogue()
+#viewCustumerList()
 #print(productCatalogue)
+#client["Nombre de points Hebdommadaires"] += product["Montant Total Achat"]/1000
 
+
+
+
+priceInPointConversion()
+viewCustumerList()
 print(custumerList)
 
-    
-    
-
-
-
-
-
-"""bread=productCreation("P098765","Pain",150,10)
-sugar=productCreation("P098764","Sucre",750,20)
-breadDel=productRemove("P098765",productCatalogue)
-print(breadDel)"""
 
 #test=productModification("2")
 #breadNew=productPriceModification("P098765",productCatalogue,250)
