@@ -19,7 +19,8 @@ custumerDictionnary={
     "Id" : "",
     "Montant Total Achat" : 0.0,
     "Nombre de points Hebdommadaires" : 0,
-    "Nombre de points Total" : 0
+    "Nombre de points Total" : 0,
+    "Point convertis en argent" : 0.0
 }
 
 
@@ -163,7 +164,8 @@ def productBying(Nom, nameProduct, Quantité):
                                 for client in custumerList:
                                     if client["Nom"] == Nom:
                                         client["Montant Total Achat"] += product["Prix"]*Quantité
-                                        print("Votre achat de {} {} vous a couté {} Francs CFA".format(Quantité,nameProduct,client["Montant Total Achat"]))
+                                        print("Votre achat de {} {} vous a couté {} Francs CFA".format(Quantité,nameProduct,product["Prix"]*Quantité))
+                                        priceInPointConversion()
                 else:
                     print("Le produit {} n'existe pas! ".format(nameProduct))
             else:
@@ -182,7 +184,7 @@ def viewCustumerList():
     numeroClient=1
     print('           Liste des clients')
     for client in custumerList:
-        print("{}. {} -> Identifiant : {} ; Montant Total des achat: {} F ; Nombre de points Hebdo : {}  ; Nombre de points Total: {}".format(numeroClient, client['Nom'],client['Id'], client['Montant Total Achat'],client['Nombre de points Hebdommadaires'],client["Nombre de points Total"])) 
+        print("{}. {} -> Identifiant : {} ; Montant Total Achat: {} F ; NB de points Hebdo : {}  ; NB de points Total: {} ; Gain totaux : {}".format(numeroClient, client['Nom'],client['Id'], client['Montant Total Achat'],client['Nombre de points Hebdommadaires'],client["Nombre de points Total"], client["Point convertis en argent"])) 
         numeroClient+=1
 
 #Fonction de conversion du prix en nombre() et etre notifié si j’ai gagné des points
@@ -190,13 +192,15 @@ def priceInPointConversion():
     for price in custumerList:
         price["Nombre de points Hebdommadaires"]+=price["Montant Total Achat"]//10000
         if price["Nombre de points Hebdommadaires"] >= 1:
-            print("Vous avez gagné {} Points cette semaine".format(price["Nombre de points Hebdommadaires"]))
+            print("Vous avez gagné {} Points.".format(price["Nombre de points Hebdommadaires"]))
 
 #Fonction de conversion des points en argent
 def pointInMoneyConversion(name):
     for client in custumerList:
         if client["Nom"] == name:
             montant=client["Nombre de points Hebdommadaires"]*1000
+            client["Point convertis en argent"] = montant
+            client["Nombre de points Hebdommadaires"] = 0
             return montant
 
 #Afficher le catalogue des produits qu'il peut acheter avec ses points cumulés
@@ -209,7 +213,7 @@ def viewProductPointBuyingCatalogue(name):
             print("{}. {} -> Prix: {} ; Quantité: {}".format(numeroArticle, product['Nom du Produit'],product['Prix'], product['Quantité'])) 
             numeroArticle+=1
 
-"""#Fonction d'achat d'un produit en utilisant les points cumules
+#Fonction d'achat d'un produit en utilisant les points cumules
 def productByingWithPoint(Nom, nameProduct, Quantité):
     for product in productCatalogue:
         if product["Nom du Produit"] == nameProduct:
@@ -223,13 +227,17 @@ def productByingWithPoint(Nom, nameProduct, Quantité):
                                 product["Quantité"] -= Quantité 
                                 for client in custumerList:
                                     if client["Nom"] == Nom:
-                                        client["Montant Total Achat"] += product["Prix"]*Quantité
-                                        print("Votre achat de {} {} vous a couté {} Francs CFA déduis de vos points".format(Quantité,nameProduct,client["Montant Total Achat"]))
+                                        pointInMoneyConversion(Nom)
+                                        if client["Point convertis en argent"] >= product["Prix"]:
+                                            client["Point convertis en argent"] -= product["Prix"]*Quantité
+                                            print("Votre achat de {} {} vous a couté {} Francs. CFA déduis de vos points".format(Quantité,nameProduct,product["Prix"]*Quantité))
+                                        else :
+                                            print("Vous n'avez pas assez de points pour acheter cet article")
                 else:
                     print("Le produit {} n'existe pas! ".format(nameProduct))
             else:
                 print("Vous ne pouvez pas acheter {} {} ! Veuillez revoir votre quantité ".format(Quantité, nameProduct))
-"""
+
 
 #Fonction pour Consulter mon solde : mes points cumulés
 def viewPoints(name):
@@ -276,34 +284,41 @@ def viewBonAchat(name):
         else :
             print("Vous n'avez aucun bon d'achat")
 
-LogFile = 'supermarché.log' 
-def addToLogFile(action,description):
+#Fonction pour générer les Logs du système
+LogFile = 'ecoShop.log' 
+def addToLogFile(actionnerName,description):
     #on ouvre le fichier en mode d'ajout 
     date = datetime.datetime.now()
     logContent = ''
-    logContent += date.strftime('%A')+' '+ str(date.day) +'-'+str(date.month)+'-'+str(date.year) +' a '+str(date.hour)+':'+str(date.minute) +' '+action +' '+description
+    logContent += date.strftime('%A')+' le '+ str(date.day) +'-'+str(date.month)+'-'+str(date.year) +' a '+str(date.hour)+':'+str(date.minute) +' '+ actionnerName +' '+description
     logFile = open(LogFile,'a')
     logFile.write(logContent +'\n')
     logFile.close()
 
 
+
 custumerIdentify("Audrey",55545)
-custumerIdentify("Maeva",5555545)
-bread=productCreation("P098766","Pain",1500,10)
-bread=productCreation("P0987645","Lait",2000,20)
+#custumerIdentify("Maeva",5555545)
+bread=productCreation("P098766","Pain",15000,10)
+#bread=productCreation("P0987645","Lait",2000,20)
 #bread3=productCreation("P098754645","Bonbon",15550,20)
 #productBuyingConfirmation(15,"Riz",1500)
-productBying("Audrey", "Pain",10)
-productBying("Maeva", "Lait",10)
-priceInPointConversion()
+productBying("Audrey", "Pain",5)
+#priceInPointConversion()
+viewCustumerList()
+#viewCatalogue()
+#productBying("Maeva", "Lait",10)
+
+#pointInMoneyConversion("Audrey")
+productByingWithPoint("Audrey", "Pain", 1)
 #viewPoints('Audrey')
 #print(custumerList)
 viewCustumerList()
 #print(gagnantTirageAuSort())
 #viewBonAchat('Audrey')
-viewCatalogue()
-
-viewProductPointBuyingCatalogue("Audrey")
+#viewCatalogue()
+#addToLogFile("Audrey","a ajoute un produit au catalogue")
+#viewProductPointBuyingCatalogue("Audrey")
 #print(productCatalogue)
 
 
