@@ -1,5 +1,7 @@
 import copy
-from unicodedata import name
+import random
+import datetime
+
 
 #Définition des modèles
 
@@ -207,46 +209,101 @@ def viewProductPointBuyingCatalogue(name):
             print("{}. {} -> Prix: {} ; Quantité: {}".format(numeroArticle, product['Nom du Produit'],product['Prix'], product['Quantité'])) 
             numeroArticle+=1
 
-#Fonction d'achat d'un produit en utilisant les points cumules
-# Rapeller le fonction d'achat product buing après avoir affiché le catalogue des produits qu'il peut acheter avec ses points
+"""#Fonction d'achat d'un produit en utilisant les points cumules
+def productByingWithPoint(Nom, nameProduct, Quantité):
+    for product in productCatalogue:
+        if product["Nom du Produit"] == nameProduct:
+            if product["Quantité"] >= Quantité:
+                refProduct=product["Reference"]
+                priceProduct=product["Prix"]
+                if productVerification(refProduct,productCatalogue):
+                    if productBuyingConfirmation(Quantité,nameProduct,priceProduct):
+                        for product in productCatalogue:
+                            if product["Reference"] == refProduct:
+                                product["Quantité"] -= Quantité 
+                                for client in custumerList:
+                                    if client["Nom"] == Nom:
+                                        client["Montant Total Achat"] += product["Prix"]*Quantité
+                                        print("Votre achat de {} {} vous a couté {} Francs CFA déduis de vos points".format(Quantité,nameProduct,client["Montant Total Achat"]))
+                else:
+                    print("Le produit {} n'existe pas! ".format(nameProduct))
+            else:
+                print("Vous ne pouvez pas acheter {} {} ! Veuillez revoir votre quantité ".format(Quantité, nameProduct))
+"""
 
 #Fonction pour Consulter mon solde : mes points cumulés
 def viewPoints(name):
     for client in custumerList:
         if client["Nom"] == name:
             print("Nom : {} -> Nombre de points : {}".format(name, client["Nombre de points Hebdommadaires"]))
-            
+
+listeDesMontants = []
+Sortedliste = []
+
+#fonction pour désigner le gagnant du tirage au sort
+def gagnantTirageAuSort():
+    for user in custumerList:
+        listeDesMontants.append(user["Montant Total Achat"])
+    listeDesMontants2 = [int(val) for val in listeDesMontants]
+    listeDesMontants2.sort(reverse=True)
+    
+    for montant in listeDesMontants2:
+        for user in custumerList:
+            if montant == user["Montant Total Achat"]:
+                Sortedliste.append(user)
+    listeSelectionnes = []
+    #Ne pas oublier de changer le range à 10
+    for i in range(2):
+
+        listeSelectionnes.append(Sortedliste[i])
+    vainqueur = random.choice(listeSelectionnes)
+    print(vainqueur["Nom"] + " est le gagnant du tirage au sort et beneficie d'un bon d'achat d'une valeur de 10000F valide une semaine ")
+    return vainqueur["Nom"]
+
+#Fonction pour afficher l'alarme
+def alarmStock():
+    listeProduitInf=[]
+    for product in productCatalogue:
+        if product["Quantité"] < 20:
+            listeProduitInf.append(product)
+    if listeProduitInf != []:
+      print('Le stocck de {} est inférieur à 20'.format(product["Nom"]))
+      
 #Fonction pour consulter mon solde : mes bons d'achat
+def viewBonAchat(name):
+        if gagnantTirageAuSort() == name:
+            print("Felicitation {} !".format(name))
+        else :
+            print("Vous n'avez aucun bon d'achat")
+
+LogFile = 'supermarché.log' 
+def addToLogFile(action,description):
+    #on ouvre le fichier en mode d'ajout 
+    date = datetime.datetime.now()
+    logContent = ''
+    logContent += date.strftime('%A')+' '+ str(date.day) +'-'+str(date.month)+'-'+str(date.year) +' a '+str(date.hour)+':'+str(date.minute) +' '+action +' '+description
+    logFile = open(LogFile,'a')
+    logFile.write(logContent +'\n')
+    logFile.close()
 
 
-#Fonction de verification des entrées utilisateurs
-"""def inputUserVerification(Quantite):
-    try:
-        type(Quantite)!=float
-    except:
-        a="Veuillez entrer un entier valide"
-    return a"""
-
-#testTry=inputUserVerification("545UIHJ")
-#print(testTry)
-
-
-
-
-#productBuyingConfirmation(15,"Riz",1500)
-#custumerIdentify("Audrey",55545)
-#custumerIdentify("Maeva",5555545)
-#bread=productCreation("P098766","Pain",1500,10)
-#bread2=productCreation("P0987645","Lait",2000,20)
+custumerIdentify("Audrey",55545)
+custumerIdentify("Maeva",5555545)
+bread=productCreation("P098766","Pain",1500,10)
+bread=productCreation("P0987645","Lait",2000,20)
 #bread3=productCreation("P098754645","Bonbon",15550,20)
-
-#productBying("Audrey", "Pain",10)
-#productBying("Audrey", "Lait",10)
-#priceInPointConversion()
+#productBuyingConfirmation(15,"Riz",1500)
+productBying("Audrey", "Pain",10)
+productBying("Maeva", "Lait",10)
+priceInPointConversion()
 #viewPoints('Audrey')
-#viewCatalogue()
-#viewCustumerList()
-#viewProductPointBuyingCatalogue("Audrey")
+#print(custumerList)
+viewCustumerList()
+#print(gagnantTirageAuSort())
+#viewBonAchat('Audrey')
+viewCatalogue()
+
+viewProductPointBuyingCatalogue("Audrey")
 #print(productCatalogue)
 
 
